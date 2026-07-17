@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Votación</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    
+    <div class="container">
+        <h1>🗳️ Sistema de Votación</h1>
+        
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="voters">
+                👤 Votantes <span class="count" id="voters-count">0</span>
+            </button>
+            <button class="tab-btn" data-tab="candidates">
+                🎯 Candidatos <span class="count" id="candidates-count">0</span>
+            </button>
+            <button class="tab-btn" data-tab="votes">
+                📊 Votos <span class="count" id="votes-count">0</span>
+            </button>
+            <button class="tab-btn" data-tab="statistics">
+                📈 Estadísticas
+            </button>
+        </div>
+
+        <!-- Tab: Votantes -->
+        <div id="voters-tab" class="tab-content active">
+            <div class="form-section">
+                <h2>Registrar Votante</h2>
+                <form id="voter-form">
+                    <input type="text" id="voter-name" placeholder="Nombre completo" required>
+                    <input type="email" id="voter-email" placeholder="Correo electrónico" required>
+                    <button type="submit">➕ Registrar</button>
+                </form>
+            </div>
+            <div class="list-section">
+                <h2>Lista de Votantes</h2>
+                <div id="voters-list"></div>
+            </div>
+        </div>
+
+        <!-- Tab: Candidatos -->
+        <div id="candidates-tab" class="tab-content">
+            <div class="form-section">
+                <h2>Registrar Candidato</h2>
+                <form id="candidate-form">
+                    <input type="text" id="candidate-name" placeholder="Nombre completo" required>
+                    <input type="email" id="candidate-email" placeholder="Correo electrónico" required>
+                    <input type="text" id="candidate-party" placeholder="Partido político (opcional)">
+                    <button type="submit">➕ Registrar</button>
+                </form>
+            </div>
+            <div class="list-section">
+                <h2>Lista de Candidatos</h2>
+                <div id="candidates-list"></div>
+            </div>
+        </div>
+
+        <!-- Tab: Votos -->
+        <div id="votes-tab" class="tab-content">
+            <div class="form-section">
+                <h2>Emitir Voto</h2>
+                <form id="vote-form">
+                    <select id="voter-select" required>
+                        <option value="">Seleccionar Votante</option>
+                    </select>
+                    <select id="candidate-select" required>
+                        <option value="">Seleccionar Candidato</option>
+                    </select>
+                    <button type="submit">🗳️ Votar</button>
+                </form>
+            </div>
+            <div class="list-section">
+                <h2>Historial de Votos</h2>
+                <div id="votes-list"></div>
+            </div>
+        </div>
+
+        <!-- Tab: Estadísticas -->
+        <div id="statistics-tab" class="tab-content">
+            <div class="statistics-section">
+                <h2 style="margin-bottom: 25px;">📊 Estadísticas de Votación</h2>
+                <div id="statistics-container"></div>
+            </div>
+        </div>
+
+        <div class="footer">
+            🚀 Sistema de Votación v1.0 | Desarrollado con <span>❤️</span> y FastAPI
+        </div>
+    </div>
+    <script src="/static/script.js"></script>
+</body>
+</html>

@@ -1,37 +1,52 @@
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
+import psycopg2
+from psycopg2 import Error, OperationalError
+from app.config import Config
 
-# Importaciones relativas
-from app.api.routes import voters_router, candidates_router, votes_router
-
-app = FastAPI(
-    title="Sistema de Votación API",
-    description="API REST para gestionar votaciones, votantes y candidatos",
-    version="1.0.0",
-    docs_url="/api/docs",
-    redoc_url="/api/redoc"
-)
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-app.include_router(voters_router)
-app.include_router(candidates_router)
-app.include_router(votes_router)
-
-@app.get("/", tags=["Root"])
-async def root():
-    return {
-        "message": "Sistema de Votación API",
-        "docs": "/api/docs",
-        "redoc": "/api/redoc"
-    }
-
-@app.get("/health", tags=["Health"])
-async def health_check():
-    return {"status": "healthy"}
+class Database:
+    def __init__(self):
+        self.connection = None
+        self.cursor = None
+    
+    def connect(self):
+        try:
+            self.connection = psycopg2.connect(Config.get_db_url())
+            self.cursor = self.connection.cursor()
+            return True
+        except OperationalError as e:
+            print(f"Error de conexion: {e}")
+            return False
+        except Error as e:
+            print(f"Error: {e}")
+            return False
+    
+    def disconnect(self):
+        if self.cursor:
+            self.cursor.close()
+        if self.connection:
+            self.connection.close()
+    
+    def execute_query(self, query, params=None):
+        try:
+            self.cursor.execute(query, params or ())
+            self.connection.commit()
+            return True
+        except Error as e:
+            print(f"Error en la consulta: {e}")
+            self.connection.rollback()
+            return False
+    
+    def fetch_all(self, query, params=None):
+        try:
+            self.cursor.execute(query, params or ())
+            return self.cursor.fetchall()
+        except Error as e:
+            print(f"Error en la consulta: {e}")
+            return []
+    
+    def fetch_one(self, query, params=None):
+        try:
+            self.cursor.execute(query, params or ())
+            return self.cursor.fetchone()
+        except Error as e:
+            print(f"Error en la consulta: {e}")
+            return None

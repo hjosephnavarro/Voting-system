@@ -8,8 +8,35 @@ from app.exceptions.custom_exceptions import (
 
 router = APIRouter(prefix="/votes", tags=["Votos"])
 
+# PRIMERO: Rutas específicas (sin parámetros)
+@router.get("/statistics", response_model=VoteStatisticsResponse)
+async def get_vote_statistics():
+    """Obtener estadísticas de votación"""
+    service = VoteService()
+    try:
+        stats = service.get_statistics()
+        return stats
+    except DatabaseError as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+    finally:
+        service.close()
+
+@router.get("/", response_model=list[VoteDetailResponse])
+async def get_all_votes():
+    """Obtener todos los votos emitidos"""
+    service = VoteService()
+    try:
+        votes = service.get_all_votes()
+        return votes
+    except DatabaseError as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+    finally:
+        service.close()
+
+# DESPUÉS: Rutas con parámetros
 @router.post("/", response_model=VoteResponse, status_code=status.HTTP_201_CREATED)
 async def create_vote(vote_data: VoteCreate):
+    """Emitir un nuevo voto"""
     service = VoteService()
     try:
         result = service.create_vote(vote_data)
@@ -23,19 +50,9 @@ async def create_vote(vote_data: VoteCreate):
     finally:
         service.close()
 
-@router.get("/", response_model=list[VoteDetailResponse])
-async def get_all_votes():
-    service = VoteService()
-    try:
-        votes = service.get_all_votes()
-        return votes
-    except DatabaseError as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
-    finally:
-        service.close()
-
 @router.get("/{vote_id}", response_model=VoteDetailResponse)
 async def get_vote_by_id(vote_id: int):
+    """Obtener un voto por su ID"""
     service = VoteService()
     try:
         vote = service.get_vote_by_id(vote_id)
@@ -47,19 +64,9 @@ async def get_vote_by_id(vote_id: int):
     finally:
         service.close()
 
-@router.get("/statistics", response_model=VoteStatisticsResponse)
-async def get_vote_statistics():
-    service = VoteService()
-    try:
-        stats = service.get_statistics()
-        return stats
-    except DatabaseError as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
-    finally:
-        service.close()
-
 @router.delete("/{vote_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_vote(vote_id: int):
+    """Eliminar un voto"""
     service = VoteService()
     try:
         service.delete_vote(vote_id)
