@@ -4,15 +4,15 @@ API REST para gestionar votaciones, votantes y candidatos. Desarrollada con Fast
 
 ## Características
 
-- ✅ Gestión completa de votantes (CRUD)
-- ✅ Gestión completa de candidatos (CRUD)
-- ✅ Sistema de votación con validaciones
-- ✅ Estadísticas en tiempo real
-- ✅ Documentación automática con Swagger/ReDoc
-- ✅ Validaciones de integridad de datos
-- ✅ Arquitectura en capas (Routes → Services → Repositories → Database)
-- ✅ Eliminación lógica (soft delete)
-- ✅ Manejo de errores con códigos HTTP apropiados
+- Gestión completa de votantes (CRUD)
+- Gestión completa de candidatos (CRUD)
+- Sistema de votación con validaciones
+- Estadísticas en tiempo real
+- Documentación automática con Swagger/ReDoc
+- Validaciones de integridad de datos
+- Arquitectura en capas (Routes → Services → Repositories → Database)
+- Eliminación lógica (soft delete)
+- Manejo de errores con códigos HTTP apropiados
 
 ## Tecnologías
 
@@ -115,3 +115,27 @@ curl -X POST http://localhost:8000/candidates \
     "email": "carlos@email.com",
     "party": "Partido Azul"
   }'
+
+##Notas Importantes
+Soft Delete y Estadisticas
+El sistema utiliza eliminacion logica (soft delete) para preservar la integridad de los datos historicos. Esto significa que:
+
+Al eliminar un votante, este se marca como eliminado pero no se borra fisicamente
+Al eliminar un candidato, este se marca como eliminado pero no se borra fisicamente
+
+IMPORTANTE: Los votos emitidos por votantes eliminados o hacia candidatos eliminados permanecen en el sistema y siguen siendo contabilizados en las estadisticas
+
+Esto es intencional para mantener la integridad de los resultados historicos. Si se elimina un votante o candidato, los votos ya emitidos no se pierden.
+
+Respuestas de la API
+Todas las respuestas incluyen codigos HTTP estandar:
+
+200 OK - Operacion exitosa
+201 Created - Recurso creado
+204 No Content - Eliminacion exitosa
+400 Bad Request - Datos invalidos
+404 Not Found - Recurso no encontrado
+409 Conflict - Conflicto (email duplicado, voto ya emitido)
+500 Internal Server Error - Error del servidor
+
+Las imagenes andan en una carpeta llamada imagenes
